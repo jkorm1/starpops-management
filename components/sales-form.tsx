@@ -133,7 +133,7 @@ export default function SalesForm({ onSuccess }) {
     : "0.00";
   const investorShare = totalSales
     ? ((Number(totalSales) * 1.5) / 10).toFixed(2)
-    : "0.00";
+    : "0.00"; // Changed from 1 to 1.5
   const savings = totalSales
     ? ((Number(totalSales) * 1) / 10).toFixed(2)
     : "0.00";

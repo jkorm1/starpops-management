@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
           "Product",
           "Quantity",
           "Price",
-          "Total",
+          "Total Sales",
           "Business Fund",
           "Employee Share",
           "Investor Share",

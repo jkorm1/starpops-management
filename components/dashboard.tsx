@@ -32,6 +32,7 @@ import {
 } from "@/lib/csv-export";
 import { getSales, getExpenses } from "@/lib/transaction-store";
 import { useEffect, useState } from "react";
+import SalesTable from "@/components/sales-table";
 
 export default function Dashboard({ data, onRefresh }) {
   const { toast } = useToast();
@@ -136,28 +137,51 @@ export default function Dashboard({ data, onRefresh }) {
     value: exp.amount,
   }));
 
+  // Calculate fund totals from sales data instead of using props
+  const fundTotals = salesData.reduce(
+    (acc, sale) => {
+      acc.businessFund += sale.businessFund || 0;
+      acc.employeeShare += sale.employeeShare || 0;
+      acc.investorShare += sale.investorShare || 0;
+      acc.savings += sale.savings || 0;
+      return acc;
+    },
+    {
+      businessFund: 0,
+      employeeShare: 0,
+      investorShare: 0,
+      savings: 0,
+    }
+  );
+
   const fundData = [
     {
       name: "Business Fund",
-      value: (data?.businessFund || 0).toFixed(2),
+      value: fundTotals.businessFund.toFixed(2),
       fill: "#f59e0b",
     },
     {
       name: "Employee Share",
-      value: (data?.employeeShare || 0).toFixed(2),
+      value: fundTotals.employeeShare.toFixed(2),
       fill: "#06b6d4",
     },
     {
       name: "Investor Share",
-      value: (data?.investorShare || 0).toFixed(2),
+      value: fundTotals.investorShare.toFixed(2),
       fill: "#8b5cf6",
     },
     {
       name: "Savings",
-      value: (data?.savings || 0).toFixed(2),
+      value: fundTotals.savings.toFixed(2), // Use calculated total
       fill: "#10b981",
     },
   ];
+
+  // Convert string values to numbers for the chart
+  const numericFundData = fundData.map((item) => ({
+    ...item,
+    value: parseFloat(item.value),
+  }));
 
   return (
     <div className="space-y-6">
@@ -258,18 +282,21 @@ export default function Dashboard({ data, onRefresh }) {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={fundData}
+                  data={numericFundData}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, value }) => `${name}: GHS ${value}`}
+                  label={({ name, value }) =>
+                    `${name}: GHS ${value.toFixed(2)}`
+                  }
                   outerRadius={100}
                   dataKey="value"
                 >
-                  {fundData.map((entry, index) => (
+                  {numericFundData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.fill} />
                   ))}
                 </Pie>
+
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>

@@ -38,8 +38,8 @@ function rowToSale(row: string[]): Sale {
     total: Number(row[6]),
     businessFund: Number(row[7]),
     employeeShare: Number(row[8]),
-    investorShare: Number(row[9]),
-    savings: Number(row[10]),
+    investorShare: Number(row[9]) || 0, // Add fallback for undefined
+    savings: Number(row[10]) || 0, 
   }
 }
 
@@ -125,7 +125,7 @@ export async function addWithdrawal(withdrawal: Omit<Withdrawal, "id">): Promise
 
 export async function getSales(): Promise<Sale[]> {
   try {
-    const { values } = await makeRequest('read', 'Sales!A2:I')
+    const { values } = await makeRequest('read', 'Sales!A2:K')
     return values.map(rowToSale)
   } catch (error) {
     console.error("Failed to fetch sales:", error)
