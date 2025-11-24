@@ -14,7 +14,8 @@ export default function FinancialStatements({ data }) {
   const netProfit = grossProfit - (data?.totalExpenses || 0);
   const totalAssets = (data?.businessFund || 0) + (data?.cash || 0);
   const totalLiabilities = data?.ownerWithdrawals || 0;
-  const ownerEquity = totalAssets - totalLiabilities;
+  const totalRepayments = data?.ownerRepayments || 0;
+  const ownerEquity = totalAssets - totalLiabilities + totalRepayments;
 
   return (
     <Tabs defaultValue="income" className="w-full">
@@ -195,7 +196,7 @@ export default function FinancialStatements({ data }) {
                     <span className="text-muted-foreground">
                       Owner repayments
                     </span>
-                    <span className="text-green-500">+ GHS 0</span>
+                    <span className="text-green-500">+ {totalRepayments}</span>
                   </div>
                 </div>
               </div>
@@ -230,7 +231,9 @@ export default function FinancialStatements({ data }) {
               </div>
               <div className="flex justify-between p-3 border-b border-border">
                 <span className="text-foreground">Add: Repayments</span>
-                <span className="font-semibold text-green-500">+ GHS 0</span>
+                <span className="font-semibold text-green-500">
+                  + GHS {totalRepayments}
+                </span>
               </div>
               <div className="flex justify-between p-3 bg-accent/10 rounded border border-accent/50">
                 <span className="text-foreground font-semibold">

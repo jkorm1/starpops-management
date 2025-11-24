@@ -119,15 +119,26 @@ export default function Dashboard({ data, onRefresh }) {
   };
 
   // Transform salesData into monthly totals for charting
-  const monthlyData = salesData.reduce((acc, sale) => {
-    const month = new Date(sale.date).toLocaleString("default", {
+  const monthlyData = [...salesData, ...expensesData].reduce((acc, entry) => {
+    const month = new Date(entry.date || entry.Date).toLocaleString("default", {
       month: "short",
     });
     const existing = acc.find((d) => d.month === month);
     if (existing) {
-      existing.sales += sale.total;
+      if (entry.total) {
+        // Sales data
+        existing.sales += entry.total;
+      }
+      if (entry.amount) {
+        // Expenses data
+        existing.expenses += entry.amount;
+      }
     } else {
-      acc.push({ month, sales: sale.total, expenses: 0 });
+      acc.push({
+        month,
+        sales: entry.total || 0,
+        expenses: entry.amount || 0,
+      });
     }
     return acc;
   }, []);
