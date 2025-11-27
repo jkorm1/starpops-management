@@ -23,11 +23,11 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 export function LayoutClient({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
-      <NavigationMenu className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <NavigationMenuList className="container mx-auto px-4 h-14 items-center">
-          <div className="mr-4 flex">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-full">
+        <nav className="px-4 h-14 w-full flex justify-between items-center">
+          <div className="flex items-center">
             <Link href="/" className="mr-6 flex items-center space-x-2">
-              <img src="/logo.png" alt="StarPops Logo" className="h-40 w-40" />
+              <img src="/logo.png" alt="StarPops Logo" className="h-35 w-35" />
               <span className="hidden font-bold sm:inline-block">StarPops</span>
             </Link>
           </div>
@@ -52,9 +52,13 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
               Setup
             </Link>
           </div>
-        </NavigationMenuList>
-        <LogoutButton />
-      </NavigationMenu>
+
+          <div className="flex items-center">
+            <LogoutButton />
+          </div>
+        </nav>
+      </header>
+
       <main className="container mx-auto">
         <AuthGuard>{children}</AuthGuard>
       </main>
