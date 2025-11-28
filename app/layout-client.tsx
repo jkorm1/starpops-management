@@ -27,7 +27,11 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
         <nav className="px-4 h-14 w-full flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/" className="mr-6 flex items-center space-x-2">
-              <img src="/logo.png" alt="StarPops Logo" className="h-35 w-35" />
+              <img
+                src="/logo.png"
+                alt="StarPops Logo"
+                className="h-12 w-12 sm:h-14 sm:w-14 object-contain"
+              />
               <span className="hidden font-bold sm:inline-block">StarPops</span>
             </Link>
           </div>

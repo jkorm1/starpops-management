@@ -3,8 +3,8 @@ import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/contexts/auth-context";
 import { useState, useEffect } from "react";
 
-const TARGET_AMOUNT = 15000;
-const MONTHLY_TARGET = 2250;
+const TARGET_AMOUNT = 18000;
+const MONTHLY_TARGET = 2700;
 
 export default function InvestorProgress({
   currentAmount,
