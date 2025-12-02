@@ -19,25 +19,11 @@ export async function POST(request: NextRequest) {
     })
     const sheets = google.sheets({ version: "v4", auth })
 
-    // Always clear all sheets first
-    await sheets.spreadsheets.values.clear({
-      spreadsheetId: sheetId,
-      range: "Sales!A:Z"
-    })
-    await sheets.spreadsheets.values.clear({
-      spreadsheetId: sheetId,
-      range: "Expenses!A:Z"
-    })
-    await sheets.spreadsheets.values.clear({
-      spreadsheetId: sheetId,
-      range: "Withdrawals!A:Z"
-    })
-    await sheets.spreadsheets.values.clear({
-      spreadsheetId: sheetId,
-      range: "Summary!A:Z"
-    })
+    // Get existing sheets first
+    const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId: sheetId })
+    const existingSheetNames = spreadsheet.data.sheets?.map((s) => s.properties?.title) || []
 
-    // Define all headers
+    // Define all headers including the new Losses sheet
     const sheetConfigs = [
       {
         name: "Sales",
@@ -58,39 +44,50 @@ export async function POST(request: NextRequest) {
       { name: "Expenses", headers: ["ID", "Date", "Category", "Description", "Amount", "Notes"] },
       { name: "Withdrawals", headers: ["ID", "Date", "Type", "Amount", "Reason", "Notes"] },
       { name: "Summary", headers: ["Metric", "Value", "Last Updated"] },
+      {
+        name: "Losses",
+        headers: [
+          "ID",
+          "Date",
+          "Product",
+          "Quantity",
+          "Price",
+          "Reason",
+          "Potential Value" 
+        ],
+      },
     ]
 
-    // Get existing sheets
-    const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId: sheetId })
-    const existingSheetNames = spreadsheet.data.sheets?.map((s) => s.properties?.title) || []
-
-    // Create or update sheets
+    // Create or update sheets only if they don't exist
     for (const config of sheetConfigs) {
       if (!existingSheetNames.includes(config.name)) {
+        // Create new sheet
         await sheets.spreadsheets.batchUpdate({
           spreadsheetId: sheetId,
           requestBody: {
             requests: [{
               addSheet: {
-                properties: { title: config.name },
+                properties: { 
+                  title: config.name,
+                },
               },
             }],
           },
         })
-      }
 
-      // Always update headers
-      await sheets.spreadsheets.values.update({
-        spreadsheetId: sheetId,
-        range: `${config.name}!A1`,
-        valueInputOption: "USER_ENTERED",
-        requestBody: { values: [config.headers] },
-      })
+        // Add headers to the new sheet
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: sheetId,
+          range: `${config.name}!A1`,
+          valueInputOption: "USER_ENTERED",
+          requestBody: { values: [config.headers] },
+        })
+      }
     }
 
     return NextResponse.json({
       success: true,
-      message: "Google Sheets cleared and rebuilt with correct structure!",
+      message: "Google Sheets setup complete! All sheets verified and created if needed.",
       sheetId,
     })
   } catch (error) {

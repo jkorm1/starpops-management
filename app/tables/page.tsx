@@ -6,6 +6,7 @@ import SalesTable from "@/components/sales-table";
 import ExpensesTable from "@/components/expenses-table";
 import EmployeeTable from "@/components/employee-table";
 import InvestorTable from "@/components/investor-table";
+import { LossesTable } from "@/components/losses-table";
 import {
   Card,
   CardContent,
@@ -20,9 +21,11 @@ export default function TablesPage() {
     totalSales: 0,
     totalExpenses: 0,
     totalProfit: 0,
+    businessFund: 0,
     investorShare: 0,
     employeeShare: 0,
     savings: 0,
+    totalLosses: 0,
   });
 
   useEffect(() => {
@@ -35,6 +38,10 @@ export default function TablesPage() {
           0
         );
         const totalProfit = totalSales - totalExpenses;
+        const businessFund = sales.reduce(
+          (sum, sale) => sum + sale.businessFund,
+          0
+        );
         const investorShare = sales.reduce(
           (sum, sale) => sum + sale.investorShare,
           0
@@ -44,14 +51,23 @@ export default function TablesPage() {
           0
         );
         const savings = sales.reduce((sum, sale) => sum + sale.savings, 0);
+        // Fetch losses
+        const lossesResponse = await fetch("/api/losses");
+        const losses = await lossesResponse.json();
+        const totalLosses = losses.reduce(
+          (sum, loss) => sum + loss.potentialValue,
+          0
+        );
 
         setSummary({
           totalSales,
           totalExpenses,
           totalProfit,
+          businessFund,
           investorShare,
           employeeShare,
           savings,
+          totalLosses,
         });
       } catch (error) {
         console.error("Failed to load summary:", error);
@@ -72,7 +88,7 @@ export default function TablesPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
@@ -113,6 +129,17 @@ export default function TablesPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Business Fund</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-accent">
+              GHS {summary.businessFund || 0}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">6 GHS per sale</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">
               Investor Share
             </CardTitle>
@@ -145,15 +172,28 @@ export default function TablesPage() {
             </div>
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Total Losses</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-600">
+              GHS {summary.totalLosses.toFixed(2)}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Tabs defaultValue="sales" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="sales" className="flex items-center gap-2">
             Sales Records
           </TabsTrigger>
           <TabsTrigger value="expenses" className="flex items-center gap-2">
             Expenses
+          </TabsTrigger>
+          <TabsTrigger value="losses" className="flex items-center gap-2">
+            Inventory Losses
           </TabsTrigger>
           <TabsTrigger value="employees" className="flex items-center gap-2">
             Employee Shares
@@ -187,6 +227,20 @@ export default function TablesPage() {
             </CardHeader>
             <CardContent>
               <ExpensesTable />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="losses" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Inventory Losses</CardTitle>
+              <CardDescription>
+                Track shared, spoiled, missing, or destroyed items
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LossesTable />
             </CardContent>
           </Card>
         </TabsContent>

@@ -8,6 +8,7 @@ import SalesForm from "@/components/sales-form";
 import ExpensesForm from "@/components/expenses-form";
 import WithdrawalsForm from "@/components/withdrawals-form";
 import FinancialStatements from "@/components/financial-statements";
+import { LossesForm } from "@/components/losses-form";
 import { useAuth } from "@/contexts/auth-context";
 
 export default function Home() {
@@ -26,6 +27,15 @@ export default function Home() {
     try {
       const response = await fetch("/api/dashboard");
       const result = await response.json();
+
+      // Fetch losses separately
+      const lossesResponse = await fetch("/api/losses");
+      const losses = await lossesResponse.json();
+      const totalLosses = losses.reduce(
+        (sum, loss) => sum + loss.potentialValue,
+        0
+      );
+
       setData(result);
       setLoading(false);
     } catch (error) {
@@ -55,7 +65,7 @@ export default function Home() {
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Quick Stats */}
         {data && (
-          <div className="grid grid-cols-1 gap-4 mb-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 mb-8 md:grid-cols-2 lg:grid-cols-3">
             <Card className="bg-card border-border">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -68,22 +78,6 @@ export default function Home() {
                 </div>
                 <p className="text-xs text-green-500 mt-1">
                   +12% from last month
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card border-border">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Business Fund
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-accent">
-                  GHS {data.businessFund || 0}
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  7 GHS per sale
                 </p>
               </CardContent>
             </Card>
@@ -107,15 +101,21 @@ export default function Home() {
             <Card className="bg-card border-border">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Owner's Withdrawals
+                  Current Profit
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-foreground">
-                  GHS {data.ownerWithdrawals || 0}
+                <div
+                  className={`text-2xl font-bold ${
+                    data.totalSales - data.totalExpenses >= 0
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  GHS {(data.totalSales - data.totalExpenses).toFixed(2) || 0}
                 </div>
-                <p className="text-xs text-red-500 mt-1">
-                  Amount owed to business
+                <p className="text-xs text-muted-foreground mt-1">
+                  Sales minus expenses
                 </p>
               </CardContent>
             </Card>
@@ -124,7 +124,7 @@ export default function Home() {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 bg-muted border border-border">
+          <TabsList className="grid w-full grid-cols-6 bg-muted border border-border">
             <TabsTrigger value="dashboard" className="text-xs md:text-sm">
               Dashboard
             </TabsTrigger>
@@ -133,6 +133,9 @@ export default function Home() {
             </TabsTrigger>
             <TabsTrigger value="expenses" className="text-xs md:text-sm">
               Expenses
+            </TabsTrigger>
+            <TabsTrigger value="losses" className="text-xs md:text-sm">
+              Losses
             </TabsTrigger>
             <TabsTrigger value="withdrawals" className="text-xs md:text-sm">
               Withdrawals
@@ -152,6 +155,10 @@ export default function Home() {
 
           <TabsContent value="expenses" className="mt-6">
             <ExpensesForm onSuccess={fetchData} />
+          </TabsContent>
+
+          <TabsContent value="losses" className="mt-6">
+            <LossesForm onSuccess={fetchData} />
           </TabsContent>
 
           <TabsContent value="withdrawals" className="mt-6">

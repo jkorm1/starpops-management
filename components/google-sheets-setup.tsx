@@ -108,11 +108,12 @@ export function GoogleSheetsSetup() {
           <p className="font-medium mb-2">What happens when you connect:</p>
           <ul className="list-disc list-inside space-y-1 text-xs">
             <li>
-              Creates 4 sheets automatically: Sales, Expenses, Withdrawals,
-              Summary
+              Creates 5 sheets automatically: Sales, Expenses, Withdrawals,
+              Summary, and Losses
             </li>
             <li>Adds all column headers to each sheet</li>
-            <li>Ready to start recording transactions immediately</li>
+            <li>Preserves existing data in all sheets</li>
+            <li>Only creates new sheets if they don't exist</li>
             <li>All data syncs in real-time to your Google Sheet</li>
           </ul>
         </div>
