@@ -54,6 +54,16 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
               Tables
             </Link>
             <Link
+              href="/customers"
+              className={`transition-colors hover:text-foreground/80 hover:underline ${
+                usePathname() === "/customers"
+                  ? "text-foreground border-b-2 border-primary"
+                  : "text-foreground/60"
+              }`}
+            >
+              Customers
+            </Link>
+            <Link
               href="/setup"
               className={`transition-colors hover:text-foreground/80 hover:underline ${
                 usePathname() === "/setup"

@@ -51,9 +51,9 @@ export function InvestorLogin() {
       <Card className="w-[400px] shadow-2xl border-0 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/90 relative">
         <CardHeader className="space-y-6 pb-8">
           {/* Logo and title section */}
-          <div className="flex flex-col items-center space-y-4">
+          <div className="flex flex-col items-center space-y-2">
             <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-lg" />
+              <div className="absolute" />
               <img
                 src="/logo.png"
                 alt="StarPops Logo"

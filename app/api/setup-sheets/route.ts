@@ -56,6 +56,10 @@ export async function POST(request: NextRequest) {
           "Potential Value" 
         ],
       },
+      {
+        name: "Customers",
+        headers: ["Name", "Contact", "Location", "Description"]
+      }
     ]
 
     // Create or update sheets only if they don't exist
