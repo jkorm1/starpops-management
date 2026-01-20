@@ -19,13 +19,11 @@ const employees = [
   "Alvin Asare",
   "Jackson Budu",
   "Diana Amano",
-  "Mercy",
-  "Keziah Miriam",
+  "Mercy Tetteh",
   "Mavis Afriyie Sakyiwaa",
   "Ewura Beniti Darkoah",
   "Caleb Sackey",
   "Vanessa Debrah",
-  "Adiza Malik",
 ];
 
 export default function SalesForm({ onSuccess }) {

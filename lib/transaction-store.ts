@@ -7,7 +7,7 @@ function generateId(): string {
 function saleToRow(sale: Sale): string[] {
   return [
     sale.id,
-    sale.date,
+    `'${sale.date}`,
     sale.employee,
     sale.product,
     String(sale.quantity),
@@ -77,7 +77,11 @@ async function makeRequest(action: string, range: string, values?: string[][]) {
   const response = await fetch(`${baseUrl}/api/sheets`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action, range, values })
+    body: JSON.stringify({ action, range, values,  params: {
+        valueInputOption: 'USER_ENTERED',
+        // Ensure dates are treated as strings, not converted to serial numbers
+        dateTimeRenderOption: 'FORMATTED_STRING'
+      } })
   })
 
   if (!response.ok) {
