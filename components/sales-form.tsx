@@ -23,7 +23,7 @@ const employees = [
   "Mavis Afriyie Sakyiwaa",
   "Ewura Beniti Darkoah",
   "Caleb Sackey",
-  "Vanessa Debrah",
+  "Humphrey Obeng Mensah",
 ];
 
 export default function SalesForm({ onSuccess }) {
