@@ -16,14 +16,16 @@ import { validateSale } from "@/lib/validation";
 
 const employees = [
   "Joseph Korm",
+  "Humphrey Obeng Mensah",
+  "Daniel Mensah",
   "Alvin Asare",
   "Jackson Budu",
+  "Jeffery Yeboah",
+  "Caleb Sackey",
   "Diana Amano",
   "Mercy Tetteh",
   "Mavis Afriyie Sakyiwaa",
   "Ewura Beniti Darkoah",
-  "Caleb Sackey",
-  "Humphrey Obeng Mensah",
 ];
 
 export default function SalesForm({ onSuccess }) {
