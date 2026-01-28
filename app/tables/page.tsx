@@ -37,34 +37,34 @@ export default function TablesPage() {
         const totalSales = sales.reduce((sum, sale) => sum + sale.total, 0);
         const totalExpenses = expenses.reduce(
           (sum, exp) => sum + exp.amount,
-          0
+          0,
         );
         const totalProfit = totalSales - totalExpenses;
 
         // Always calculate from total, ignore stored values
         const productionCost = sales.reduce(
-          (sum, sale) => sum + (sale.total * 63) / 100,
-          0
+          (sum, sale) => sum + (sale.total * 60) / 100,
+          0,
         );
         const investorShare = sales.reduce(
           (sum, sale) => sum + (sale.total * 12) / 100,
-          0
+          0,
         );
         const salesPayroll = sales.reduce(
-          (sum, sale) => sum + (sale.total * 6.944) / 100,
-          0
+          (sum, sale) => sum + (sale.total * 1) / 100,
+          0,
         );
         const packagingPayroll = sales.reduce(
-          (sum, sale) => sum + (sale.total * 6.944) / 100,
-          0
+          (sum, sale) => sum + (sale.total * 7) / 100,
+          0,
         );
         const savings = sales.reduce(
-          (sum, sale) => sum + (sale.total * 5.556) / 100,
-          0
+          (sum, sale) => sum + (sale.total * 5.5) / 100,
+          0,
         );
         const reinvestment = sales.reduce(
-          (sum, sale) => sum + (sale.total * 5.556) / 100,
-          0
+          (sum, sale) => sum + (sale.total * 5.5) / 100,
+          0,
         );
 
         // Fetch losses
@@ -72,7 +72,7 @@ export default function TablesPage() {
         const losses = await lossesResponse.json();
         const totalLosses = losses.reduce(
           (sum, loss) => sum + loss.potentialValue,
-          0
+          0,
         );
 
         setSummary({
@@ -156,7 +156,7 @@ export default function TablesPage() {
             <div className="text-2xl font-bold text-accent">
               GHS {summary.productionCost.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">63% per sale</p>
+            <p className="text-xs text-muted-foreground mt-1">60% per sale</p>
           </CardContent>
         </Card>
         <Card>
@@ -180,9 +180,7 @@ export default function TablesPage() {
             <div className="text-2xl font-bold">
               GHS {summary.salesPayroll.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              6.944% per sale
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">10% per sale</p>
           </CardContent>
         </Card>
         <Card>
@@ -195,9 +193,7 @@ export default function TablesPage() {
             <div className="text-2xl font-bold">
               GHS {summary.packagingPayroll.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              6.944% per sale
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">7% per sale</p>
           </CardContent>
         </Card>
         <Card>
@@ -208,9 +204,7 @@ export default function TablesPage() {
             <div className="text-2xl font-bold">
               GHS {summary.savings.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              5.556% per sale
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">5.5% per sale</p>
           </CardContent>
         </Card>
         <Card>
@@ -221,9 +215,7 @@ export default function TablesPage() {
             <div className="text-2xl font-bold">
               GHS {summary.reinvestment.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              5.556% per sale
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">5.5% per sale</p>
           </CardContent>
         </Card>
       </div>

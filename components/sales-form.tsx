@@ -68,12 +68,12 @@ export default function SalesForm({ onSuccess }) {
       event:
         formData.event === "Normal" ? "Normal" : formData.eventName || "Normal",
       total: totalSales,
-      productionCost: Number((totalSales * 0.63).toFixed(2)),
+      productionCost: Number((totalSales * 0.6).toFixed(2)),
       investorShare: Number((totalSales * 0.12).toFixed(2)),
-      salesPayroll: Number((totalSales * 0.06944).toFixed(2)),
-      packagingPayroll: Number((totalSales * 0.06944).toFixed(2)),
-      savings: Number((totalSales * 0.05556).toFixed(2)),
-      reinvestment: Number((totalSales * 0.05556).toFixed(2)),
+      salesPayroll: Number((totalSales * 0.1).toFixed(2)),
+      packagingPayroll: Number((totalSales * 0.07).toFixed(2)),
+      savings: Number((totalSales * 0.05).toFixed(2)),
+      reinvestment: Number((totalSales * 0.05).toFixed(2)),
     };
 
     setLoading(true);
@@ -129,22 +129,22 @@ export default function SalesForm({ onSuccess }) {
       : "0.00";
 
   const productionCost = totalSales
-    ? ((Number(totalSales) * 63) / 100).toFixed(2)
+    ? ((Number(totalSales) * 60) / 100).toFixed(2)
     : "0.00";
   const investorShare = totalSales
     ? ((Number(totalSales) * 12) / 100).toFixed(2)
     : "0.00";
   const salesPayroll = totalSales
-    ? ((Number(totalSales) * 6.944) / 100).toFixed(2)
+    ? ((Number(totalSales) * 10) / 100).toFixed(2)
     : "0.00";
   const packagingPayroll = totalSales
-    ? ((Number(totalSales) * 6.944) / 100).toFixed(2)
+    ? ((Number(totalSales) * 7) / 100).toFixed(2)
     : "0.00";
   const savings = totalSales
-    ? ((Number(totalSales) * 5.556) / 100).toFixed(2)
+    ? ((Number(totalSales) * 5.5) / 100).toFixed(2)
     : "0.00";
   const reinvestment = totalSales
-    ? ((Number(totalSales) * 5.556) / 100).toFixed(2)
+    ? ((Number(totalSales) * 5.5) / 100).toFixed(2)
     : "0.00";
 
   return (
@@ -305,7 +305,7 @@ export default function SalesForm({ onSuccess }) {
           <div className="space-y-3">
             <div className="flex justify-between items-center p-3 bg-muted/50 rounded border border-border">
               <span className="text-sm text-foreground">
-                Production Cost (63%)
+                Production Cost (60%)
               </span>
               <span className="font-semibold text-accent">
                 GHS {productionCost}
@@ -321,7 +321,7 @@ export default function SalesForm({ onSuccess }) {
             </div>
             <div className="flex justify-between items-center p-3 bg-muted/50 rounded border border-border">
               <span className="text-sm text-foreground">
-                Sales Payroll (6.944%)
+                Sales Payroll (10%)
               </span>
               <span className="font-semibold text-cyan-400">
                 GHS {salesPayroll}
@@ -329,21 +329,21 @@ export default function SalesForm({ onSuccess }) {
             </div>
             <div className="flex justify-between items-center p-3 bg-muted/50 rounded border border-border">
               <span className="text-sm text-foreground">
-                Packaging Payroll (6.944%)
+                Packaging Payroll (7%)
               </span>
               <span className="font-semibold text-cyan-400">
                 GHS {packagingPayroll}
               </span>
             </div>
             <div className="flex justify-between items-center p-3 bg-muted/50 rounded border border-border">
-              <span className="text-sm text-foreground">Savings (5.556%)</span>
+              <span className="text-sm text-foreground">Savings (5.5%)</span>
               <span className="font-semibold text-green-400">
                 GHS {savings}
               </span>
             </div>
             <div className="flex justify-between items-center p-3 bg-muted/50 rounded border border-border">
               <span className="text-sm text-foreground">
-                Reinvestment (5.556%)
+                Reinvestment (5.5%)
               </span>
               <span className="font-semibold text-green-400">
                 GHS {reinvestment}
