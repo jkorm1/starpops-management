@@ -51,7 +51,7 @@ export default function TablesPage() {
           0,
         );
         const salesPayroll = sales.reduce(
-          (sum, sale) => sum + (sale.total * 1) / 100,
+          (sum, sale) => sum + (sale.total * 10) / 100,
           0,
         );
         const packagingPayroll = sales.reduce(

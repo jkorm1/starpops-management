@@ -208,12 +208,12 @@ export default function Dashboard({ data, onRefresh }) {
     (acc: Record<string, number>, sale: Sale) => {
       const total = sale.total || 0;
       // Always calculate from total, ignore stored values
-      acc.productionCost += (total * 63) / 100;
+      acc.productionCost += (total * 60) / 100;
       acc.investorShare += (total * 12) / 100; // Force recalculation
-      acc.salesPayroll += (total * 6.944) / 100;
-      acc.packagingPayroll += (total * 6.944) / 100;
-      acc.savings += (total * 5.556) / 100;
-      acc.reinvestment += (total * 5.556) / 100;
+      acc.salesPayroll += (total * 10) / 100;
+      acc.packagingPayroll += (total * 7) / 100;
+      acc.savings += (total * 5.5) / 100;
+      acc.reinvestment += (total * 5.5) / 100;
       return acc;
     },
     {
@@ -223,7 +223,7 @@ export default function Dashboard({ data, onRefresh }) {
       packagingPayroll: 0,
       savings: 0,
       reinvestment: 0,
-    }
+    },
   );
 
   const fundData = [
