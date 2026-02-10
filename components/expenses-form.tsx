@@ -28,14 +28,16 @@ const expenseCategories = [
   "Sugar",
   "Oil",
   "Milk",
+  "Toppings",
   "Flavour",
   "Butter",
   "Cups",
   "Tissue",
-  "Packaging",
-  "Transport",
-  "Electricity",
+  "Packages",
   "Stand",
+  "Transport",
+  "Flyers",
+  "Electricity",
   "Utilities",
   "Others",
 ];
@@ -84,12 +86,12 @@ export default function ExpensesForm({ onSuccess }) {
   const updateExpense = (
     id: string,
     field: keyof ExpenseItem,
-    value: string
+    value: string,
   ) => {
     setExpenses((prev) =>
       prev.map((expense) =>
-        expense.id === id ? { ...expense, [field]: value } : expense
-      )
+        expense.id === id ? { ...expense, [field]: value } : expense,
+      ),
     );
   };
 
@@ -107,10 +109,13 @@ export default function ExpensesForm({ onSuccess }) {
     });
 
     if (validationErrors.length > 0) {
-      const errorMap = validationErrors.reduce((acc, err) => {
-        acc[`${err.field}-${err.id}`] = err.message;
-        return acc;
-      }, {} as Record<string, string>);
+      const errorMap = validationErrors.reduce(
+        (acc, err) => {
+          acc[`${err.field}-${err.id}`] = err.message;
+          return acc;
+        },
+        {} as Record<string, string>,
+      );
       setErrors(errorMap);
       toast({
         title: "Validation Error",
@@ -132,7 +137,7 @@ export default function ExpensesForm({ onSuccess }) {
 
         if (!response.ok) {
           throw new Error(
-            `Failed to record expense: ${expense.description || "Unknown"}`
+            `Failed to record expense: ${expense.description || "Unknown"}`,
           );
         }
         return response.json();
