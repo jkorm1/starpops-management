@@ -75,12 +75,12 @@ export default function Dashboard({ data, onRefresh }) {
     const employee = sale.employee;
     const existing = acc.find((e) => e.employee === employee);
     if (existing) {
-      existing.totalShare += (sale.total * 6.944) / 100; // Sales + Packaging payroll
+      existing.totalShare += (sale.total * 10) / 100; // Sales + Packaging payroll
       existing.salesCount += 1;
     } else {
       acc.push({
         employee,
-        totalShare: (sale.total * 6.944) / 100,
+        totalShare: (sale.total * 10) / 100,
         salesCount: 1,
       });
     }
