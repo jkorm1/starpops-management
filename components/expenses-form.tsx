@@ -38,6 +38,7 @@ const expenseCategories = [
   "Transport",
   "Flyers",
   "Electricity",
+  "Repairs",
   "Utilities",
   "Others",
 ];
