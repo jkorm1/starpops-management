@@ -253,18 +253,18 @@ export default function EmployeeDashboard() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="bg-muted border border-border rounded-lg p-1 mb-4">
-          <TabsList className="grid w-full grid-cols-4 md:grid-cols-6 bg-transparent border-0 bg-muted border border-border gap-1 auto-rows-min pd-3 mb-4">
+          <TabsList className="grid w-full grid-cols-4 md:grid-cols-6 bg-transparent border-0 gap-1 auto-rows-min pb-2">
             <TabsTrigger value="overview" className="text-xs md:text-sm">
               Overview
             </TabsTrigger>
             <TabsTrigger value="daily" className="text-xs md:text-sm">
-              Daily Records
+              Daily
             </TabsTrigger>
             <TabsTrigger value="summary" className="text-xs md:text-sm">
-              Employee Summary
+              Summary
             </TabsTrigger>
             <TabsTrigger value="monthly" className="text-xs md:text-sm">
-              Monthly Performance
+              Monthly
             </TabsTrigger>
           </TabsList>
         </div>
