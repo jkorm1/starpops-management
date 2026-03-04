@@ -5,18 +5,34 @@ import { usePathname } from "next/navigation";
 import { InvestorLogin } from "@/components/investor-login";
 import { useAuth } from "@/contexts/auth-context";
 import { LogoutButton } from "@/components/logout-button";
+import EmployeeDashboard from "@/components/employee-dashboard";
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, userType } = useAuth();
 
   if (!isAuthenticated) {
     return <InvestorLogin />;
+  }
+
+  if (userType === "employee") {
+    return <EmployeeDashboard />;
   }
 
   return <>{children}</>;
 }
 
 export function LayoutClient({ children }: { children: React.ReactNode }) {
+  const { userType } = useAuth();
+
+  // Don't show navigation for employees
+  if (userType === "employee") {
+    return (
+      <div className="min-h-screen bg-background">
+        <AuthGuard>{children}</AuthGuard>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-full">

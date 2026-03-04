@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/auth-context";
-import { Loader2, Lock, Shield } from "lucide-react";
+import { Loader2, Lock, Shield, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function InvestorLogin() {
   const [password, setPassword] = useState("");
@@ -15,14 +16,17 @@ export function InvestorLogin() {
   const { login } = useAuth();
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (
+    e: React.FormEvent,
+    type: "investor" | "employee",
+  ) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const result = login(password);
+    const result = login(password, type);
     if (!result.success) {
       setError("Invalid password. Please try again.");
       setIsLoading(false);
@@ -61,10 +65,10 @@ export function InvestorLogin() {
               />
             </div>
             <CardTitle className="text-3xl font-bold text-center bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-              Investor Access
+              StarPops Management
             </CardTitle>
             <p className="text-sm text-muted-foreground text-center">
-              Enter your password to access the system
+              Select your access type to continue
             </p>
           </div>
         </CardHeader>
@@ -76,50 +80,118 @@ export function InvestorLogin() {
             <span>Secure Connection</span>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label
-                htmlFor="password"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center space-x-2"
+          <Tabs defaultValue="employee" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="employee" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Employee
+              </TabsTrigger>
+              <TabsTrigger value="investor" className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Investor
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="employee" className="space-y-4 mt-6">
+              <form
+                onSubmit={(e) => handleSubmit(e, "employee")}
+                className="space-y-4"
               >
-                <Lock className="h-4 w-4" />
-                <span>Password</span>
-              </label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your secure password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError("");
-                }}
-                className={`h-12 ${
-                  error ? "border-destructive focus:border-destructive" : ""
-                }`}
-                disabled={isLoading}
-              />
-              {error && (
-                <p className="text-sm text-destructive animate-in fade-in-0 slide-in-from-top-2">
-                  {error}
-                </p>
-              )}
-            </div>
-            <Button
-              type="submit"
-              className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                "Access System"
-              )}
-            </Button>
-          </form>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="employee-password"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center space-x-2"
+                  >
+                    <Lock className="h-4 w-4" />
+                    <span>Employee Password</span>
+                  </label>
+                  <Input
+                    id="employee-password"
+                    type="password"
+                    placeholder="Enter your employee password"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setError("");
+                    }}
+                    className={`h-12 ${
+                      error ? "border-destructive focus:border-destructive" : ""
+                    }`}
+                    disabled={isLoading}
+                  />
+                  {error && (
+                    <p className="text-sm text-destructive animate-in fade-in-0 slide-in-from-top-2">
+                      {error}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    "Access Employee Portal"
+                  )}
+                </Button>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="investor" className="space-y-4 mt-6">
+              <form
+                onSubmit={(e) => handleSubmit(e, "investor")}
+                className="space-y-4"
+              >
+                <div className="space-y-2">
+                  <label
+                    htmlFor="investor-password"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center space-x-2"
+                  >
+                    <Lock className="h-4 w-4" />
+                    <span>Investor Password</span>
+                  </label>
+                  <Input
+                    id="investor-password"
+                    type="password"
+                    placeholder="Enter your investor password"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setError("");
+                    }}
+                    className={`h-12 ${
+                      error ? "border-destructive focus:border-destructive" : ""
+                    }`}
+                    disabled={isLoading}
+                  />
+                  {error && (
+                    <p className="text-sm text-destructive animate-in fade-in-0 slide-in-from-top-2">
+                      {error}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    "Access Investor Portal"
+                  )}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
 
           {/* Footer decoration */}
           <div className="flex items-center justify-center space-x-2 text-xs text-muted-foreground pt-4 border-t border-border/50">

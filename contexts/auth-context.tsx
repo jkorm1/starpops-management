@@ -13,10 +13,19 @@ interface Investor {
   password: string;
 }
 
+interface Employee {
+  name: string;
+  password: string;
+}
+
 interface AuthContextType {
   isAuthenticated: boolean;
-  investorName: string | null;
-  login: (password: string) => { success: boolean; name?: string };
+  userName: string | null;
+  userType: "investor" | "employee" | null;
+  login: (
+    password: string,
+    type: "investor" | "employee",
+  ) => { success: boolean; name?: string };
   logout: () => void;
 }
 
@@ -38,45 +47,118 @@ const INVESTORS: Investor[] = [
   },
 ];
 
+// Define your employees and their passwords
+const EMPLOYEES: Employee[] = [
+  {
+    name: "Joseph Korm",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_1_PASSWORD || "",
+  },
+  {
+    name: "Humphrey Obeng Mensah",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_2_PASSWORD || "",
+  },
+  {
+    name: "Daniel Mensah",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_3_PASSWORD || "",
+  },
+  {
+    name: "Alvin Asare",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_4_PASSWORD || "",
+  },
+  {
+    name: "Jackson Budu",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_5_PASSWORD || "",
+  },
+  {
+    name: "Jeffery Yeboah",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_6_PASSWORD || "",
+  },
+  {
+    name: "Caleb Sackey",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_7_PASSWORD || "",
+  },
+  {
+    name: "Diana Amano",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_8_PASSWORD || "",
+  },
+  {
+    name: "Mercy Tetteh",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_9_PASSWORD || "",
+  },
+  {
+    name: "Mavis Afriyie Sakyiwaa",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_10_PASSWORD || "",
+  },
+  {
+    name: "Ewura Beniti Darkoah",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_11_PASSWORD || "",
+  },
+];
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [investorName, setInvestorName] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [userType, setUserType] = useState<"investor" | "employee" | null>(
+    null,
+  );
 
   useEffect(() => {
     const auth = sessionStorage.getItem("investor-auth");
     if (auth) {
-      const { name } = JSON.parse(auth);
+      const { name, type } = JSON.parse(auth);
       setIsAuthenticated(true);
-      setInvestorName(name);
+      setUserName(name);
+      setUserType(type);
     }
   }, []);
 
-  const login = (password: string) => {
-    const investor = INVESTORS.find((inv) => inv.password === password);
-    if (investor) {
-      setIsAuthenticated(true);
-      setInvestorName(investor.name);
-      sessionStorage.setItem(
-        "investor-auth",
-        JSON.stringify({
-          authenticated: true,
-          name: investor.name,
-        })
-      );
-      return { success: true, name: investor.name };
+  const login = (password: string, type: "investor" | "employee") => {
+    if (type === "investor") {
+      const investor = INVESTORS.find((inv) => inv.password === password);
+      if (investor) {
+        setIsAuthenticated(true);
+        setUserName(investor.name);
+        setUserType("investor");
+        sessionStorage.setItem(
+          "investor-auth",
+          JSON.stringify({
+            authenticated: true,
+            name: investor.name,
+            type: "investor",
+          }),
+        );
+        return { success: true, name: investor.name };
+      }
+    } else {
+      const employee = EMPLOYEES.find((emp) => emp.password === password);
+      if (employee) {
+        setIsAuthenticated(true);
+        setUserName(employee.name);
+        setUserType("employee");
+        sessionStorage.setItem(
+          "investor-auth",
+          JSON.stringify({
+            authenticated: true,
+            name: employee.name,
+            type: "employee",
+          }),
+        );
+        return { success: true, name: employee.name };
+      }
     }
     return { success: false };
   };
 
   const logout = () => {
     setIsAuthenticated(false);
-    setInvestorName(null);
+    setUserName(null);
+    setUserType(null);
     sessionStorage.removeItem("investor-auth");
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, investorName, login, logout }}
+      value={{ isAuthenticated, userName, userType, login, logout }}
     >
       {children}
     </AuthContext.Provider>
