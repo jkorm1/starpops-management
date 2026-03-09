@@ -72,19 +72,19 @@ const EMPLOYEES: Employee[] = [
 
   {
     name: "Caleb Sackey",
-    password: process.env.NEXT_PUBLIC_EMPLOYEE_7_PASSWORD || "",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_6_PASSWORD || "",
   },
   {
     name: "Diana Amano",
-    password: process.env.NEXT_PUBLIC_EMPLOYEE_8_PASSWORD || "",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_7_PASSWORD || "",
   },
   {
     name: "Mercy Tetteh",
-    password: process.env.NEXT_PUBLIC_EMPLOYEE_9_PASSWORD || "",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_8_PASSWORD || "",
   },
   {
     name: "Mavis Afriyie Sakyiwaa",
-    password: process.env.NEXT_PUBLIC_EMPLOYEE_10_PASSWORD || "",
+    password: process.env.NEXT_PUBLIC_EMPLOYEE_9_PASSWORD || "",
   },
 ];
 
