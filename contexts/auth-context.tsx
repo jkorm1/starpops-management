@@ -58,7 +58,7 @@ const EMPLOYEES: Employee[] = [
     password: process.env.NEXT_PUBLIC_EMPLOYEE_2_PASSWORD || "",
   },
   {
-    name: "Daniel Mensah",
+    name: "Ewura Beniti Darkoah",
     password: process.env.NEXT_PUBLIC_EMPLOYEE_3_PASSWORD || "",
   },
   {
@@ -88,10 +88,6 @@ const EMPLOYEES: Employee[] = [
   {
     name: "Mavis Afriyie Sakyiwaa",
     password: process.env.NEXT_PUBLIC_EMPLOYEE_10_PASSWORD || "",
-  },
-  {
-    name: "Ewura Beniti Darkoah",
-    password: process.env.NEXT_PUBLIC_EMPLOYEE_11_PASSWORD || "",
   },
 ];
 
