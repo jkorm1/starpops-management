@@ -15,12 +15,14 @@ export function EmployeeProgress({
   const QUANTITY_TARGET = 520; // Target quantity
   const DAILY_MINIMUM = 20; // Minimum pieces per day
 
-  const quantityPercentage = Math.min(
-    (currentQuantity / QUANTITY_TARGET) * 100,
-    100,
-  );
+  // Calculate completed payout cycles
+  const completedPayouts = Math.floor(currentQuantity / QUANTITY_TARGET);
 
-  const remainingQuantity = QUANTITY_TARGET - currentQuantity;
+  // Calculate current cycle progress
+  const currentCycleQuantity = currentQuantity % QUANTITY_TARGET;
+  const quantityPercentage = (currentCycleQuantity / QUANTITY_TARGET) * 100;
+
+  const remainingQuantity = QUANTITY_TARGET - currentCycleQuantity;
   const estimatedDaysRemaining = Math.ceil(remainingQuantity / DAILY_MINIMUM);
 
   return (
@@ -31,9 +33,9 @@ export function EmployeeProgress({
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span>Quantity Target</span>
+            <span>Current Payout Cycle</span>
             <span className="font-medium">
-              {currentQuantity} / {QUANTITY_TARGET} pieces
+              {currentCycleQuantity} / {QUANTITY_TARGET} pieces
             </span>
           </div>
           <Progress value={quantityPercentage} className="w-full" />
@@ -45,6 +47,12 @@ export function EmployeeProgress({
             <div className="text-green-600">
               ~{estimatedDaysRemaining} days left (at 20 pieces/day minimum)
             </div>
+            {completedPayouts > 0 && (
+              <div className="text-blue-600 font-medium">
+                {completedPayouts} payout{completedPayouts > 1 ? "s" : ""}{" "}
+                completed
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

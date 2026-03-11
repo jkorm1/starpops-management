@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
+import { Trash2, CheckCircle, XCircle } from "lucide-react";
 
 export default function SalesTable() {
   const [sales, setSales] = useState<Sale[]>([]);
@@ -21,6 +22,22 @@ export default function SalesTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState<keyof Sale>("date");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [notification, setNotification] = useState<{
+    show: boolean;
+    message: string;
+    type: "success" | "error";
+  }>({
+    show: false,
+    message: "",
+    type: "success",
+  });
+
+  const showNotification = (message: string, type: "success" | "error") => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => {
+      setNotification({ show: false, message: "", type: "success" });
+    }, 3000);
+  };
 
   useEffect(() => {
     const loadSales = async () => {
@@ -45,11 +62,30 @@ export default function SalesTable() {
     }
   };
 
+  const handleDeleteSale = async (saleId: string) => {
+    try {
+      const response = await fetch(`/api/sales?id=${saleId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete sale");
+      }
+
+      // Update local state to remove the deleted sale
+      setSales(sales.filter((sale) => sale.id !== saleId));
+      showNotification("Sale deleted successfully", "success");
+    } catch (error) {
+      console.error("Failed to delete sale:", error);
+      showNotification("Failed to delete sale", "error");
+    }
+  };
+
   const filteredAndSortedSales = sales
     .filter((sale) =>
       Object.values(sale).some((value) =>
-        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-      )
+        value.toString().toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
     )
     .sort((a, b) => {
       const aValue = a[sortField];
@@ -65,6 +101,24 @@ export default function SalesTable() {
 
   return (
     <div className="space-y-4">
+      {/* Notification Component */}
+      {notification.show && (
+        <div
+          className={`flex items-center gap-2 p-4 rounded-md ${
+            notification.type === "success"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {notification.type === "success" ? (
+            <CheckCircle className="h-5 w-5" />
+          ) : (
+            <XCircle className="h-5 w-5" />
+          )}
+          <span>{notification.message}</span>
+        </div>
+      )}
+
       <div className="flex items-center space-x-2">
         <Input
           placeholder="Search sales..."
@@ -73,6 +127,7 @@ export default function SalesTable() {
           className="max-w-sm"
         />
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -222,6 +277,16 @@ export default function SalesTable() {
                   GHS{" "}
                   {sale.reinvestment?.toFixed(2) ||
                     (sale.total * 0.05556).toFixed(2)}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDeleteSale(sale.id)}
+                    className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

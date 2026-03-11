@@ -4,6 +4,7 @@ import { JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "./providers";
 import { LayoutClient } from "./layout-client";
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
 const inter = Inter({
@@ -53,6 +54,7 @@ export default function RootLayout({
           <LayoutClient>{children}</LayoutClient>
         </Providers>
         <Analytics />
+        <Toaster />
       </body>
     </html>
   );

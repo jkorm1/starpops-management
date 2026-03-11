@@ -106,6 +106,31 @@ export async function addSale(sale: Omit<Sale, "id">): Promise<Sale> {
   }
 }
 
+export async function deleteSale(saleId: string): Promise<void> {
+  try {
+    // First, get all sales to find the index of the sale to delete
+    const sales = await getSales();
+    const saleIndex = sales.findIndex(sale => sale.id === saleId);
+    
+    if (saleIndex === -1) {
+      throw new Error(`Sale with ID ${saleId} not found`);
+    }
+    
+    // Calculate the row number in the sheet (add 2 because of header row and 0-based index)
+    const rowNumber = saleIndex + 2;
+    
+    // Delete the row from the sheet
+    await makeRequest('delete', `Sales!A${rowNumber}:O${rowNumber}`);
+  } catch (error) {
+    console.error("Failed to delete sale:", error);
+    const errorMessage = error instanceof Error ? error.message : "Failed to delete sale";
+    throw new Error(errorMessage);
+  }
+}
+
+
+
+
 export async function addExpense(expense: Omit<Expense, "id">): Promise<Expense> {
   const newExpense: Expense = {
     ...expense,

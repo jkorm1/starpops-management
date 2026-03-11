@@ -18,6 +18,18 @@ async function getSheetsClient() {
   return google.sheets({ version: "v4", auth })
 }
 
+// Helper function to get sheet ID by name
+async function getSheetId(sheets: any, spreadsheetId: string, sheetName: string): Promise<number> {
+  const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId })
+  const sheet = spreadsheet.data.sheets?.find((s: any) => s.properties?.title === sheetName)
+  
+  if (!sheet) {
+    throw new Error(`Sheet ${sheetName} not found`)
+  }
+  
+  return sheet.properties.sheetId
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { action, range, values } = await request.json()
@@ -45,6 +57,30 @@ export async function POST(request: NextRequest) {
           range,
         })
         return NextResponse.json({ values: readResponse.data.values || [] })
+
+      case 'delete':
+        // Extract sheet name and row number from range (e.g., "Sales!A2:O2")
+        const [sheetName, cellRange] = range.split('!')
+        // Extract row number from cell range (e.g., "A2:O2" -> 2)
+        const rowNumber = parseInt(cellRange.match(/\d+/)?.[0] || '0')
+        
+        // Delete the row using batchUpdate
+        const deleteResponse = await sheets.spreadsheets.batchUpdate({
+          spreadsheetId,
+          requestBody: {
+            requests: [{
+              deleteDimension: {
+                range: {
+                  sheetId: await getSheetId(sheets, spreadsheetId, sheetName),
+                  dimension: 'ROWS',
+                  startIndex: rowNumber - 1, // Convert to 0-based index
+                  endIndex: rowNumber, // endIndex is exclusive
+                },
+              },
+            }],
+          },
+        })
+        return NextResponse.json({ success: true, data: deleteResponse.data })
 
       case 'setup':
        const sheetConfigs = [

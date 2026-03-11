@@ -1,5 +1,6 @@
 import { calculateSaleSplit } from "@/lib/financial-logic"
-import { addSale } from "@/lib/transaction-store"
+import { addSale, deleteSale } from "@/lib/transaction-store"
+
 
 interface SaleData {
   date: string;
@@ -60,13 +61,17 @@ export async function POST(request: Request) {
       event: data.event, // Now using single event field
     });
 
-    return Response.json({ success: true, data: sale });
+     return Response.json({ 
+      success: true, 
+      message: "Sale recorded successfully",
+      data: sale 
+    });
   } catch (error) {
     console.error("Sales API error:", error);
-    return Response.json({ error: "Failed to record sale" }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : "Failed to record sale";
+    return Response.json({ error: errorMessage }, { status: 500 });
   }
 }
-
 
 export async function GET() {
   try {
@@ -84,3 +89,25 @@ export async function GET() {
     return Response.json({ error: "Failed to fetch sales" }, { status: 500 })
   }
 }
+
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const saleId = searchParams.get('id');
+    
+    if (!saleId) {
+      return Response.json({ error: "Sale ID is required" }, { status: 400 });
+    }
+
+    // Dynamically import deleteSale to avoid build issues
+    const { deleteSale } = await import("@/lib/transaction-store");
+    await deleteSale(saleId);
+    return Response.json({ success: true, message: "Sale deleted successfully" });
+  } catch (error) {
+    console.error("Delete sale error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Failed to delete sale";
+    return Response.json({ error: errorMessage }, { status: 500 });
+  }
+}
+
