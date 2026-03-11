@@ -149,6 +149,7 @@ export default function ExpensesForm({ onSuccess }) {
       toast({
         title: "Success",
         description: `Successfully recorded ${expenses.length} expense(s)`,
+        variant: "success",
       });
       setExpenses([
         {

@@ -6,6 +6,16 @@ import { getSales } from "@/lib/transaction-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -30,6 +40,13 @@ export default function SalesTable() {
     show: false,
     message: "",
     type: "success",
+  });
+  const [deleteDialog, setDeleteDialog] = useState<{
+    show: boolean;
+    saleId: string;
+  }>({
+    show: false,
+    saleId: "",
   });
 
   const showNotification = (message: string, type: "success" | "error") => {
@@ -62,9 +79,9 @@ export default function SalesTable() {
     }
   };
 
-  const handleDeleteSale = async (saleId: string) => {
+  const handleDeleteSale = async () => {
     try {
-      const response = await fetch(`/api/sales?id=${saleId}`, {
+      const response = await fetch(`/api/sales?id=${deleteDialog.saleId}`, {
         method: "DELETE",
       });
 
@@ -73,8 +90,9 @@ export default function SalesTable() {
       }
 
       // Update local state to remove the deleted sale
-      setSales(sales.filter((sale) => sale.id !== saleId));
+      setSales(sales.filter((sale) => sale.id !== deleteDialog.saleId));
       showNotification("Sale deleted successfully", "success");
+      setDeleteDialog({ show: false, saleId: "" });
     } catch (error) {
       console.error("Failed to delete sale:", error);
       showNotification("Failed to delete sale", "error");
@@ -282,7 +300,9 @@ export default function SalesTable() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDeleteSale(sale.id)}
+                    onClick={() =>
+                      setDeleteDialog({ show: true, saleId: sale.id })
+                    }
                     className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -293,6 +313,37 @@ export default function SalesTable() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        open={deleteDialog.show}
+        onOpenChange={(open) =>
+          setDeleteDialog({ show: open, saleId: deleteDialog.saleId })
+        }
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              sale record from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => setDeleteDialog({ show: false, saleId: "" })}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteSale}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

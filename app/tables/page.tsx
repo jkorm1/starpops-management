@@ -222,7 +222,7 @@ export default function TablesPage() {
 
       <Tabs defaultValue="sales" className="space-y-4">
         <div className="bg-muted border border-border rounded-lg p-1 mb-4">
-          <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 bg-muted border border-border auto-rows-min pd-3 mb-4">
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 bg-muted border border-border auto-rows-min pd-3 mb-4">
             <TabsTrigger
               value="sales"
               className="flex items-center gap-2 text-xs md:text-sm"

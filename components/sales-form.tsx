@@ -90,7 +90,7 @@ export default function SalesForm({ onSuccess }) {
         toast({
           title: "Success",
           description: "Sale recorded successfully",
-          variant: "default",
+          variant: "success",
         });
         setFormData({
           date: new Date().toISOString().split("T")[0],
