@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Sale } from "@/lib/financial-logic";
 import { getSales } from "@/lib/transaction-store";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
-import { Trash2, CheckCircle, XCircle } from "lucide-react";
+import {
+  Trash2,
+  CheckCircle,
+  XCircle,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
 
 export default function SalesTable() {
   const [sales, setSales] = useState<Sale[]>([]);
@@ -48,6 +54,7 @@ export default function SalesTable() {
     show: false,
     saleId: "",
   });
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   const showNotification = (message: string, type: "success" | "error") => {
     setNotification({ show: true, message, type });
@@ -99,19 +106,72 @@ export default function SalesTable() {
     }
   };
 
-  const filteredAndSortedSales = sales
-    .filter((sale) =>
-      Object.values(sale).some((value) =>
-        value.toString().toLowerCase().includes(searchTerm.toLowerCase()),
-      ),
-    )
-    .sort((a, b) => {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
-      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
-      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
-      return 0;
-    });
+  const toggleRowExpansion = (rowId: string) => {
+    const newExpandedRows = new Set(expandedRows);
+    if (newExpandedRows.has(rowId)) {
+      newExpandedRows.delete(rowId);
+    } else {
+      newExpandedRows.add(rowId);
+    }
+    setExpandedRows(newExpandedRows);
+  };
+
+  // Group sales by employee and date
+  const groupedSales = sales.reduce(
+    (acc, sale) => {
+      const key = `${sale.employee}-${sale.date}`;
+      if (!acc[key]) {
+        acc[key] = {
+          employee: sale.employee,
+          date: sale.date,
+          sales: [],
+          totals: {
+            quantity: 0,
+            price: 0, // This will be a weighted average
+            total: 0,
+            productionCost: 0,
+            investorShare: 0,
+            salesPayroll: 0,
+            packagingPayroll: 0,
+            savings: 0,
+            reinvestment: 0,
+          },
+        };
+      }
+
+      acc[key].sales.push(sale);
+
+      // Calculate totals
+      acc[key].totals.quantity += sale.quantity;
+      acc[key].totals.total += sale.total;
+      acc[key].totals.productionCost += sale.productionCost || sale.total * 0.6;
+      acc[key].totals.investorShare += sale.investorShare || sale.total * 0.12;
+      acc[key].totals.salesPayroll += sale.salesPayroll || sale.total * 0.1;
+      acc[key].totals.packagingPayroll +=
+        sale.packagingPayroll || sale.total * 0.07;
+      acc[key].totals.savings += sale.savings || sale.total * 0.05;
+      acc[key].totals.reinvestment += sale.reinvestment || sale.total * 0.05;
+
+      return acc;
+    },
+    {} as Record<string, any>,
+  );
+
+  // Convert to array and sort
+  const groupedSalesArray = Object.values(groupedSales).sort((a, b) => {
+    const aValue = a[sortField as keyof typeof a];
+    const bValue = b[sortField as keyof typeof b];
+    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  // Filter based on search term
+  const filteredGroupedSales = groupedSalesArray.filter((group) =>
+    Object.values(group).some((value) =>
+      value.toString().toLowerCase().includes(searchTerm.toLowerCase()),
+    ),
+  );
 
   if (loading) {
     return <div className="text-center p-4">Loading sales data...</div>;
@@ -150,6 +210,7 @@ export default function SalesTable() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-10"></TableHead>
               <TableHead
                 className="cursor-pointer hover:bg-muted/50"
                 onClick={() => handleSort("date")}
@@ -252,64 +313,124 @@ export default function SalesTable() {
                 {sortField === "reinvestment" &&
                   (sortDirection === "asc" ? "↑" : "↓")}
               </TableHead>
+              <TableHead className="w-10"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredAndSortedSales.map((sale) => (
-              <TableRow key={sale.id}>
-                <TableCell>
-                  {format(new Date(sale.date), "MMM d, yyyy")}
-                </TableCell>
-                <TableCell>{sale.employee}</TableCell>
-                <TableCell>{sale.product}</TableCell>
-                <TableCell>{sale.quantity}</TableCell>
-                <TableCell>GHS {sale.price.toFixed(2)}</TableCell>
-                <TableCell>GHS {sale.total.toFixed(2)}</TableCell>
-                <TableCell>{sale.event || "Normal"}</TableCell>
-                <TableCell>
-                  GHS{" "}
-                  {sale.productionCost?.toFixed(2) ||
-                    (sale.total * 0.63).toFixed(2)}
-                </TableCell>
-                <TableCell>
-                  GHS{" "}
-                  {sale.investorShare?.toFixed(2) ||
-                    (sale.total * 0.12).toFixed(2)}
-                </TableCell>
-                <TableCell>
-                  GHS{" "}
-                  {sale.salesPayroll?.toFixed(2) ||
-                    (sale.total * 0.06944).toFixed(2)}
-                </TableCell>
-                <TableCell>
-                  GHS{" "}
-                  {sale.packagingPayroll?.toFixed(2) ||
-                    (sale.total * 0.06944).toFixed(2)}
-                </TableCell>
-                <TableCell>
-                  GHS{" "}
-                  {sale.savings?.toFixed(2) ||
-                    (sale.total * 0.05556).toFixed(2)}
-                </TableCell>
-                <TableCell>
-                  GHS{" "}
-                  {sale.reinvestment?.toFixed(2) ||
-                    (sale.total * 0.05556).toFixed(2)}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() =>
-                      setDeleteDialog({ show: true, saleId: sale.id })
-                    }
-                    className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {filteredGroupedSales.map((group) => {
+              const rowId = `${group.employee}-${group.date}`;
+              const isExpanded = expandedRows.has(rowId);
+
+              return (
+                <React.Fragment key={rowId}>
+                  <TableRow className="bg-muted/20">
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => toggleRowExpansion(rowId)}
+                      >
+                        {isExpanded ? (
+                          <ChevronDown className="h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      {format(new Date(group.date), "MMM d, yyyy")}
+                    </TableCell>
+                    <TableCell>{group.employee}</TableCell>
+                    <TableCell className="font-semibold">
+                      Multiple Products
+                    </TableCell>
+                    <TableCell className="font-semibold">
+                      {group.totals.quantity}
+                    </TableCell>
+                    <TableCell>-</TableCell>
+                    <TableCell className="font-semibold">
+                      GHS {group.totals.total.toFixed(2)}
+                    </TableCell>
+                    <TableCell>-</TableCell>
+                    <TableCell className="font-semibold">
+                      GHS {group.totals.productionCost.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="font-semibold">
+                      GHS {group.totals.investorShare.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="font-semibold">
+                      GHS {group.totals.salesPayroll.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="font-semibold">
+                      GHS {group.totals.packagingPayroll.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="font-semibold">
+                      GHS {group.totals.savings.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="font-semibold">
+                      GHS {group.totals.reinvestment.toFixed(2)}
+                    </TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+
+                  {isExpanded &&
+                    group.sales.map((sale) => (
+                      <TableRow key={sale.id} className="bg-muted/10">
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
+                        <TableCell>{sale.product}</TableCell>
+                        <TableCell>{sale.quantity}</TableCell>
+                        <TableCell>GHS {sale.price.toFixed(2)}</TableCell>
+                        <TableCell>GHS {sale.total.toFixed(2)}</TableCell>
+                        <TableCell>{sale.event || "Normal"}</TableCell>
+                        <TableCell>
+                          GHS{" "}
+                          {sale.productionCost?.toFixed(2) ||
+                            (sale.total * 0.6).toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                          GHS{" "}
+                          {sale.investorShare?.toFixed(2) ||
+                            (sale.total * 0.12).toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                          GHS{" "}
+                          {sale.salesPayroll?.toFixed(2) ||
+                            (sale.total * 0.1).toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                          GHS{" "}
+                          {sale.packagingPayroll?.toFixed(2) ||
+                            (sale.total * 0.07).toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                          GHS{" "}
+                          {sale.savings?.toFixed(2) ||
+                            (sale.total * 0.05).toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                          GHS{" "}
+                          {sale.reinvestment?.toFixed(2) ||
+                            (sale.total * 0.05).toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() =>
+                              setDeleteDialog({ show: true, saleId: sale.id })
+                            }
+                            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </React.Fragment>
+              );
+            })}
           </TableBody>
         </Table>
       </div>

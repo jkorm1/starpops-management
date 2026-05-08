@@ -61,8 +61,23 @@ export async function POST(request: NextRequest) {
       },
       {
         name: "Customers",
-        headers: ["Name", "Contact", "Location", "Description"]
-      }
+        headers: ["Name", "Contact", "Location", "Description", "DateTime"]
+      },
+      {
+      name: "Orders",
+      headers: [
+        "Order ID",
+        "Date",
+        "Customer Name",
+        "Customer Phone",
+        "Customer Address",
+        "Items",
+        "Total",
+        "Note",
+        "Status"
+      ],
+  }
+
     ]
 
 // Create or update sheets

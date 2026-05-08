@@ -1,4 +1,7 @@
-import type { Sale, Expense, Withdrawal } from "./financial-logic"
+import type { Sale, Expense, Withdrawal, Order } from "./financial-logic"
+
+// Add this after the other interfaces in the file
+
 
 function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
@@ -71,6 +74,36 @@ function rowToWithdrawal(row: string[]): Withdrawal {
     type: row[4] as "withdrawal" | "repayment",
   }
 }
+
+// Add these conversion functions after the other conversion functions
+function rowToOrder(row: string[]): Order {
+  return {
+    orderId: row[0],
+    date: row[1],
+    customerName: row[2],
+    customerPhone: row[3],
+    customerAddress: row[4],
+    items: JSON.parse(row[5] || "[]"),
+    total: parseFloat(row[6]) || 0,
+    note: row[7] || "",
+    status: row[8] || "Pending",
+  }
+}
+
+function orderToRow(order: Order): string[] {
+  return [
+    order.orderId,
+    `'${order.date}`,
+    order.customerName,
+    order.customerPhone,
+    order.customerAddress,
+    JSON.stringify(order.items),
+    String(order.total),
+    order.note,
+    order.status,
+  ]
+}
+
 
 async function makeRequest(action: string, range: string, values?: string[][]) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
@@ -191,16 +224,69 @@ export async function getWithdrawals(): Promise<Withdrawal[]> {
   }
 }
 
+// Add these functions after the other transaction functions
+export async function getOrders(): Promise<Order[]> {
+  try {
+    const { values } = await makeRequest('read', 'Orders!A2:I')
+    return values.map(rowToOrder)
+  } catch (error) {
+    console.error("Failed to fetch orders:", error)
+    return []
+  }
+}
+
+export async function updateOrderStatus(orderId: string, status: string): Promise<void> {
+  try {
+    // First, get all orders to find the index of the order to update
+    const orders = await getOrders();
+    const orderIndex = orders.findIndex(order => order.orderId === orderId);
+    
+    if (orderIndex === -1) {
+      throw new Error(`Order with ID ${orderId} not found`);
+    }
+    
+    // Calculate the row number in the sheet (add 2 because of header row and 0-based index)
+    const rowNumber = orderIndex + 2;
+    
+    // Update the status in the sheet
+    await makeRequest('update', `Orders!I${rowNumber}`, [[status]]);
+  } catch (error) {
+    console.error("Failed to update order status:", error);
+    const errorMessage = error instanceof Error ? error.message : "Failed to update order status";
+    throw new Error(errorMessage);
+  }
+}
+
+export async function addOrder(order: Omit<Order, "orderId">): Promise<Order> {
+  const newOrder: Order = {
+    ...order,
+    orderId: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 3)}`,
+  }
+
+  try {
+    await makeRequest('append', 'Orders!A2', [orderToRow(newOrder)])
+    return newOrder
+  } catch (error) {
+    console.error("Failed to add order:", error)
+    throw new Error("Failed to save order")
+  }
+}
+
+
+// Update the getAllTransactions function to include orders
 export async function getAllTransactions() {
-  const [sales, expenses, withdrawals] = await Promise.all([
+  const [sales, expenses, withdrawals, orders] = await Promise.all([
     getSales(),
     getExpenses(),
     getWithdrawals(),
+    getOrders(),
   ])
 
   return {
     sales,
     expenses,
     withdrawals,
+    orders,
   }
 }
+

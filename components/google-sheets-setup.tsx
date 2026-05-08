@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 
 export function GoogleSheetsSetup() {
   const [sheetId, setSheetId] = useState(
-    "1jxnOIYWWLz2GfGNmdntxHr30UD6o94cWZP2X73hFalw"
+    "1jxnOIYWWLz2GfGNmdntxHr30UD6o94cWZP2X73hFalw",
   );
 
   const credentials = {
@@ -50,7 +50,7 @@ export function GoogleSheetsSetup() {
 
       if (response.ok) {
         setMessage(
-          "✅ Google Sheets connected! All tables and columns created automatically. Add these env vars to Vercel Vars section: NEXT_PUBLIC_GOOGLE_SHEET_ID and GOOGLE_SHEETS_CREDENTIALS"
+          "✅ Google Sheets connected! All tables and columns created automatically. Add these env vars to Vercel Vars section: NEXT_PUBLIC_GOOGLE_SHEET_ID and GOOGLE_SHEETS_CREDENTIALS",
         );
       } else {
         setMessage(`❌ ${data.error}`);
@@ -108,8 +108,8 @@ export function GoogleSheetsSetup() {
           <p className="font-medium mb-2">What happens when you connect:</p>
           <ul className="list-disc list-inside space-y-1 text-xs">
             <li>
-              Creates 6 sheets automatically: Sales, Expenses, Withdrawals,
-              Summary, and Losses
+              Creates 7 sheets automatically: Sales, Expenses, Withdrawals,
+              Summary, Losses, Customers, and Orders
             </li>
             <li>Adds all column headers to each sheet</li>
             <li>Preserves existing data in all sheets</li>

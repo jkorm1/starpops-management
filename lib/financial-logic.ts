@@ -49,6 +49,19 @@ export interface FinancialSummary {
   employeeShares: EmployeeShare[]
 }
 
+// Add this after the other interfaces in the file
+export interface Order {
+  orderId: string
+  date: string
+  customerName: string
+  customerPhone: string
+  customerAddress: string
+  items: { name: string; quantity: string }[]
+  total: number
+  note: string
+  status: string
+}
+
 // Calculate fund split from sales
 export function calculateSaleSplit(total: number) {
   const businessFund = (total * 6) / 10  // Changed from 7/10 to 6/10

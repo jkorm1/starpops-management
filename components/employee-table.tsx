@@ -17,7 +17,7 @@ interface EmployeeMonthlyShare {
   employee: string;
   month: string;
   totalShare: number;
-  salesCount: number;
+  daysCount: number;
 }
 
 interface ExtendedSale extends Sale {
@@ -26,7 +26,7 @@ interface ExtendedSale extends Sale {
 
 export default function EmployeeTable() {
   const [monthlyShares, setMonthlyShares] = useState<EmployeeMonthlyShare[]>(
-    []
+    [],
   );
   const [loading, setLoading] = useState(true);
 
@@ -36,26 +36,43 @@ export default function EmployeeTable() {
         const sales = await getSales();
 
         // Group sales by employee and month
-        const sharesByEmployee = sales.reduce((acc, sale: ExtendedSale) => {
-          const month = format(new Date(sale.date), "MMM yyyy");
-          const key = `${sale.employee}-${month}`;
+        const sharesByEmployee = sales.reduce(
+          (acc, sale: ExtendedSale) => {
+            const month = format(new Date(sale.date), "MMM yyyy");
+            const key = `${sale.employee}-${month}`;
 
-          if (!acc[key]) {
-            acc[key] = {
-              employee: sale.employee,
-              month,
-              totalShare: 0,
-              salesCount: 0,
-            };
-          }
+            if (!acc[key]) {
+              acc[key] = {
+                employee: sale.employee,
+                month,
+                totalShare: 0,
+                daysCount: 0,
+                uniqueDates: new Set<string>(),
+              };
+            }
 
-          acc[key].totalShare += sale.salesPayroll || 0;
-          acc[key].salesCount += 1;
+            acc[key].totalShare += sale.salesPayroll || 0;
+            acc[key].uniqueDates.add(sale.date);
 
-          return acc;
-        }, {} as Record<string, EmployeeMonthlyShare>);
+            return acc;
+          },
+          {} as Record<
+            string,
+            EmployeeMonthlyShare & { uniqueDates: Set<string> }
+          >,
+        );
 
-        setMonthlyShares(Object.values(sharesByEmployee));
+        // Convert to array and calculate days count
+        const monthlySharesArray = Object.values(sharesByEmployee).map(
+          (item) => ({
+            employee: item.employee,
+            month: item.month,
+            totalShare: item.totalShare,
+            daysCount: item.uniqueDates.size,
+          }),
+        );
+
+        setMonthlyShares(monthlySharesArray);
       } catch (error) {
         console.error("Failed to load employee shares:", error);
       } finally {
@@ -78,7 +95,7 @@ export default function EmployeeTable() {
               <TableHead>Employee</TableHead>
               <TableHead>Month</TableHead>
               <TableHead>Total Share (GHS)</TableHead>
-              <TableHead>Sales Count</TableHead>
+              <TableHead>Days Count</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -87,7 +104,7 @@ export default function EmployeeTable() {
                 <TableCell>{share.employee}</TableCell>
                 <TableCell>{share.month}</TableCell>
                 <TableCell>GHS {share.totalShare.toFixed(2)}</TableCell>
-                <TableCell>{share.salesCount}</TableCell>
+                <TableCell>{share.daysCount}</TableCell>
               </TableRow>
             ))}
           </TableBody>
