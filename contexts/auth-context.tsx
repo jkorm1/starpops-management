@@ -45,6 +45,10 @@ const INVESTORS: Investor[] = [
     name: "Preston Pesiba Amnankwa",
     password: process.env.NEXT_PUBLIC_INVESTOR_3_PASSWORD || "",
   },
+  {
+    name: "Jackson Bryan Budu",
+    password: process.env.NEXT_PUBLIC_INVESTOR_4_PASSWORD || "",
+  },
 ];
 
 // Define your employees and their passwords
