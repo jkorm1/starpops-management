@@ -142,12 +142,13 @@ export default function SalesForm({ onSuccess }) {
             formData.event === "Normal"
               ? "Normal"
               : formData.eventName || "Normal",
-          productionCost: Number((productTotal * 0.6).toFixed(2)),
+          productionCost: Number((productTotal * 0.4).toFixed(2)),
           investorShare: Number((productTotal * 0.12).toFixed(2)),
           salesPayroll: Number((productTotal * 0.1).toFixed(2)),
-          packagingPayroll: Number((productTotal * 0.07).toFixed(2)),
-          savings: Number((productTotal * 0.05).toFixed(2)),
-          reinvestment: Number((productTotal * 0.05).toFixed(2)),
+          packagingPayroll: Number((productTotal * 0.1).toFixed(2)),
+          savings: Number((productTotal * 0.1).toFixed(2)),
+          reinvestment: Number((productTotal * 0.1).toFixed(2)),
+          // founderPay: Number((productTotal * 0.08).toFixed(2)), // Reserved space
         };
       })
       .filter(Boolean);
@@ -213,12 +214,12 @@ export default function SalesForm({ onSuccess }) {
     const total = quantity * product.price;
     return {
       total: total.toFixed(2),
-      productionCost: ((total * 60) / 100).toFixed(2),
+      productionCost: ((total * 40) / 100).toFixed(2),
       investorShare: ((total * 12) / 100).toFixed(2),
       salesPayroll: ((total * 10) / 100).toFixed(2),
-      packagingPayroll: ((total * 7) / 100).toFixed(2),
-      savings: ((total * 5.5) / 100).toFixed(2),
-      reinvestment: ((total * 5.5) / 100).toFixed(2),
+      packagingPayroll: ((total * 10) / 100).toFixed(2),
+      savings: ((total * 10) / 100).toFixed(2),
+      reinvestment: ((total * 10) / 100).toFixed(2),
     };
   };
 
@@ -378,7 +379,7 @@ export default function SalesForm({ onSuccess }) {
                 </div>
                 <div className="flex justify-between items-center p-3 bg-muted/50 rounded border border-border">
                   <span className="text-sm text-foreground">
-                    Production Cost (60%)
+                    Production Cost (40%)
                   </span>
                   <span className="font-semibold text-accent">
                     GHS {split.productionCost}
@@ -402,23 +403,21 @@ export default function SalesForm({ onSuccess }) {
                 </div>
                 <div className="flex justify-between items-center p-3 bg-muted/50 rounded border border-border">
                   <span className="text-sm text-foreground">
-                    Packaging Payroll (7%)
+                    Packaging Payroll (10%)
                   </span>
                   <span className="font-semibold text-cyan-400">
                     GHS {split.packagingPayroll}
                   </span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-muted/50 rounded border border-border">
-                  <span className="text-sm text-foreground">
-                    Savings (5.5%)
-                  </span>
+                  <span className="text-sm text-foreground">Savings (10%)</span>
                   <span className="font-semibold text-green-400">
                     GHS {split.savings}
                   </span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-muted/50 rounded border border-border">
                   <span className="text-sm text-foreground">
-                    Reinvestment (5.5%)
+                    Reinvestment (10%)
                   </span>
                   <span className="font-semibold text-green-400">
                     GHS {split.reinvestment}

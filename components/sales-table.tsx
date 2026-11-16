@@ -144,13 +144,13 @@ export default function SalesTable() {
       // Calculate totals
       acc[key].totals.quantity += sale.quantity;
       acc[key].totals.total += sale.total;
-      acc[key].totals.productionCost += sale.productionCost || sale.total * 0.6;
+      acc[key].totals.productionCost += sale.productionCost || sale.total * 0.4;
       acc[key].totals.investorShare += sale.investorShare || sale.total * 0.12;
       acc[key].totals.salesPayroll += sale.salesPayroll || sale.total * 0.1;
       acc[key].totals.packagingPayroll +=
-        sale.packagingPayroll || sale.total * 0.07;
-      acc[key].totals.savings += sale.savings || sale.total * 0.05;
-      acc[key].totals.reinvestment += sale.reinvestment || sale.total * 0.05;
+        sale.packagingPayroll || sale.total * 0.1;
+      acc[key].totals.savings += sale.savings || sale.total * 0.1;
+      acc[key].totals.reinvestment += sale.reinvestment || sale.total * 0.1;
 
       return acc;
     },
@@ -387,7 +387,7 @@ export default function SalesTable() {
                         <TableCell>
                           GHS{" "}
                           {sale.productionCost?.toFixed(2) ||
-                            (sale.total * 0.6).toFixed(2)}
+                            (sale.total * 0.4).toFixed(2)}
                         </TableCell>
                         <TableCell>
                           GHS{" "}
@@ -402,17 +402,17 @@ export default function SalesTable() {
                         <TableCell>
                           GHS{" "}
                           {sale.packagingPayroll?.toFixed(2) ||
-                            (sale.total * 0.07).toFixed(2)}
+                            (sale.total * 0.1).toFixed(2)}
                         </TableCell>
                         <TableCell>
                           GHS{" "}
                           {sale.savings?.toFixed(2) ||
-                            (sale.total * 0.05).toFixed(2)}
+                            (sale.total * 0.1).toFixed(2)}
                         </TableCell>
                         <TableCell>
                           GHS{" "}
                           {sale.reinvestment?.toFixed(2) ||
-                            (sale.total * 0.05).toFixed(2)}
+                            (sale.total * 0.1).toFixed(2)}
                         </TableCell>
                         <TableCell>
                           <Button

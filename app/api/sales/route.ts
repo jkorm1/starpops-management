@@ -52,12 +52,12 @@ export async function POST(request: Request) {
       quantity: Number(data.quantity),
       price: Number(data.price),
       total: Math.round(total * 100) / 100,
-      productionCost: Math.round((total * 0.60) * 100) / 100,
+      productionCost: Math.round((total * 0.40) * 100) / 100,
       investorShare: Math.round((total * 0.12) * 100) / 100,
       salesPayroll: Math.round((total * 0.1) * 100) / 100,
-      packagingPayroll: Math.round((total * 0.07) * 100) / 100,
-      savings: Math.round((total * 0.05) * 100) / 100,
-      reinvestment: Math.round((total * 0.05) * 100) / 100,
+      packagingPayroll: Math.round((total * 0.1) * 100) / 100,
+      savings: Math.round((total * 0.1) * 100) / 100,
+      reinvestment: Math.round((total * 0.1) * 100) / 100,
       event: data.event, // Now using single event field
     });
 

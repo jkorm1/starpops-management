@@ -171,7 +171,7 @@ export default function ExpensesPerUnit({
             Profit per Unit: GHS {profitPerUnit.toFixed(2)}
           </p>
         </div>
-        // Replace the cost breakdown section with this updated version
+
         <div className="mt-4">
           <h4 className="text-sm font-semibold mb-2">
             Cost Breakdown per Unit:

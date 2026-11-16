@@ -43,7 +43,7 @@ export default function TablesPage() {
 
         // Always calculate from total, ignore stored values
         const productionCost = sales.reduce(
-          (sum, sale) => sum + (sale.total * 60) / 100,
+          (sum, sale) => sum + (sale.total * 40) / 100,
           0,
         );
         const investorShare = sales.reduce(
@@ -55,15 +55,15 @@ export default function TablesPage() {
           0,
         );
         const packagingPayroll = sales.reduce(
-          (sum, sale) => sum + (sale.total * 7) / 100,
+          (sum, sale) => sum + (sale.total * 10) / 100,
           0,
         );
         const savings = sales.reduce(
-          (sum, sale) => sum + (sale.total * 5.5) / 100,
+          (sum, sale) => sum + (sale.total * 10) / 100,
           0,
         );
         const reinvestment = sales.reduce(
-          (sum, sale) => sum + (sale.total * 5.5) / 100,
+          (sum, sale) => sum + (sale.total * 10) / 100,
           0,
         );
 
@@ -156,7 +156,7 @@ export default function TablesPage() {
             <div className="text-2xl font-bold text-accent">
               GHS {summary.productionCost.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">60% per sale</p>
+            <p className="text-xs text-muted-foreground mt-1">40% per sale</p>
           </CardContent>
         </Card>
         <Card>
@@ -193,7 +193,7 @@ export default function TablesPage() {
             <div className="text-2xl font-bold">
               GHS {summary.packagingPayroll.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">7% per sale</p>
+            <p className="text-xs text-muted-foreground mt-1">10% per sale</p>
           </CardContent>
         </Card>
         <Card>
@@ -204,7 +204,7 @@ export default function TablesPage() {
             <div className="text-2xl font-bold">
               GHS {summary.savings.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">5.5% per sale</p>
+            <p className="text-xs text-muted-foreground mt-1">10% per sale</p>
           </CardContent>
         </Card>
         <Card>
@@ -215,7 +215,7 @@ export default function TablesPage() {
             <div className="text-2xl font-bold">
               GHS {summary.reinvestment.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">5.5% per sale</p>
+            <p className="text-xs text-muted-foreground mt-1">10% per sale</p>
           </CardContent>
         </Card>
       </div>
